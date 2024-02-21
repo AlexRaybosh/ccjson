@@ -55,10 +55,10 @@ public:
 
 class ThreadExecutor {
 	friend class WorkThread;
-	std::list<std::shared_ptr<WorkThread>> freeWorkers{};
+	std::list<WorkThread*> freeWorkers{};
 public:
-	template <typename R, typename... ARGS> std::future<R> call(const std::function<R (ARGS...)>& f, ARGS... args) {
-		std::shared_ptr<WorkThread> workThread=freeWorkers.empty() ? std::make_shared<WorkThread>(this) : *freeWorkers.erase(std::prev(freeWorkers.end()));
+	template <typename R, typename... ARGS> std::future<R> call(const std::function<R (const ARGS& ...)>& f, const ARGS& ... args) {
+		WorkThread* workThread=freeWorkers.empty() ? new WorkThread(this) : *freeWorkers.erase(std::prev(freeWorkers.end()));
 		std::promise<R> promise;
 		std::future<R> res=promise.get_future();
 		auto func = [p=std::move(promise), f, args ...]() mutable {
@@ -70,6 +70,9 @@ public:
 		};
 		func();
 		return res;
+	}
+	void free(WorkThread* wt) {
+		freeWorkers.push_back(wt);
 	}
 };
 
@@ -83,7 +86,7 @@ void WorkThread::loop() {
 		//lock.unlock();
 		func();
 		func=nullptr;
-		threadExecutor->
+		threadExecutor->free(this);
 		//lock.lock();
 	}
 }
