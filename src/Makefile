@@ -1,6 +1,7 @@
 
-all: x86_64_g x86_64
+all: x86_64_g 
 
+#x86_64
 #armhf_g armhf 
 
 #armel

@@ -67,7 +67,8 @@ else ifeq "$(ARCH)" "armel"
 else ifeq "$(ARCH)" "x86_64"
 	CXX:=g++
 	AR:=ar
-	LDFLAGS:=-L /usr/lib/x86_64-linux-gnu -Wl,-Bstatic -ljansson -Wl,-Bdynamic	
+	LDFLAGS:=-L /usr/lib/x86_64-linux-gnu -Wl,-Bstatic -levent -levent_openssl -levent_pthreads -Wl,-Bdynamic \
+	-pthread	
 	OBJCOPY:=objcopy
 	OBJCOPY_ARGS:= --input-target binary --output-target elf64-x86-64
 	TESTER:=
