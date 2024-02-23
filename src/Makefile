@@ -1,5 +1,5 @@
 
-all: x86_64_g 
+all: x86_64_g armhf_g
 
 #x86_64
 #armhf_g armhf 

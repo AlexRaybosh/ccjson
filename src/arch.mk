@@ -46,11 +46,13 @@ CXXFLAGS:=$(OPT) \
 	-D_POSIX_C_SOURCE=202001L -D_XOPEN_SOURCE=600 -fPIC -pthread \
 	-std=c++17
 
+ARM_STATIC:=
+
 ifeq "$(ARCH)" "armhf"
 	CXX:=arm-linux-gnueabihf-g++
 	AR:=arm-linux-gnueabihf-ar
 	LDFLAGS:=$(LDFLAGS) -L$(SYSROOT)/lib/arm-linux-gnueabihf -L$(SYSROOT)/usr/lib/arm-linux-gnueabihf
-	LDFLAGS:=$(LDFLAGS) -static-libstdc++ -static-libgcc -Wl,-Bstatic -ljansson -Wl,-Bdynamic
+	LDFLAGS:=$(LDFLAGS) -static-libstdc++ -static-libgcc -Wl,-Bstatic $(ARM_STATIC) -Wl,-Bdynamic -lpthread
 	OBJCOPY:=/usr/bin/arm-linux-gnueabihf-objcopy
 	OBJCOPY_ARGS:= -v --input-target binary --output-target elf32-littlearm
 	TESTER:= qemu-arm
@@ -59,7 +61,7 @@ else ifeq "$(ARCH)" "armel"
 	CXX:=arm-linux-gnueabi-g++
 	AR:=arm-linux-gnueabi-ar
 	LDFLAGS:=$(LDFLAGS) -L /usr/lib/arm-linux-gnueabi -L$(SYSROOT)/lib/arm-linux-gnueabihf
-	LDFLAGS:=$(LDFLAGS) -Wl,-Bstatic -ljansson -Wl,-Bdynamic	
+	LDFLAGS:=$(LDFLAGS) -Wl,-Bstatic $(ARM_STATIC) -Wl,-Bdynamic -lpthread  
 	OBJCOPY:=/usr/bin/arm-linux-gnueabi-objcopy
 	OBJCOPY_ARGS:= --input-target binary --output-target elf32-littlearm
 	TESTER:= qemu-arm
